@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "600228047502",
+    "firebase_url": "https://bayo-f1055.firebaseio.com",
+    "project_id": "bayo-f1055",
+    "storage_bucket": "bayo-f1055.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600228047502:android:7e68d42406a6e6f8",
+        "android_client_info": {
+          "package_name": "com.example.tobeisun.bayo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "600228047502-ne5nlpihtjk2jk63mh63isudplo3gf2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tobeisun.bayo",
+            "certificate_hash": "fff0086970d92096da014c94716c17ff1bc73d8e"
+          }
+        },
+        {
+          "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLO2YvePZsPfa6rMlyU81IOTwAAeTTjt8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
