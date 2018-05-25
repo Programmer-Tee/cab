@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try
                 {
-                    sleep(3000); // to display screen for 7 seconds
+                    sleep(2000); // to display screen for 2 seconds
 
                 }
 
@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
                 finally
                 {
-                    Intent welcomeintent = new Intent(MainActivity.this, Welcome.class);
+                    Intent welcomeintent = new Intent(MainActivity.this, Welcome.class); //this happens after the try block is executed
                             startActivity(welcomeintent);
                 }
 

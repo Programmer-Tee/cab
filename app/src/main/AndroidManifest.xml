@@ -16,7 +16,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Welcome"></activity>
+        <activity android:name=".Welcome" />
+        <activity android:name=".DriverLogin" />
+        <activity android:name=".CustomerLogin"></activity>
     </application>
 
 </manifest>
