@@ -133,7 +133,7 @@ public class DriverLogin extends AppCompatActivity {
                                 Toast.makeText(DriverLogin.this,"Successful Login",Toast.LENGTH_LONG).show();
                                 loadingbar.dismiss();
 
-                                Intent x= new Intent(DriverLogin.this,DriverMap.class);
+                                Intent x= new Intent(DriverLogin.this,Driversmap.class);
                                         startActivity(x);
 
                             }
@@ -189,7 +189,7 @@ public class DriverLogin extends AppCompatActivity {
                                 loadingbar.dismiss();
 
 
-                                Intent x= new Intent(DriverLogin.this,DriverMap.class);
+                                Intent x= new Intent(DriverLogin.this,Driversmap.class);
                                 startActivity(x);
 
                             }
