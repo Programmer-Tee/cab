@@ -1,122 +1,161 @@
 package com.example.tobeisun.bayo;
 
+
+
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
+import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+/**
+ * This demo shows how GMS Location can be used to check for changes to the users location.  The
+ * "My Location" button uses GMS Location to set the blue dot representing the users location.
+ * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
+ * time. If the permission has not been granted, the Activity is finished with an error message.
+ */
+class MapsActivity extends AppCompatActivity
+        implements
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        OnMapReadyCallback,
+        ActivityCompat.OnRequestPermissionsResultCallback {
 
+    /**
+     * Request code for location permission request.
+     *
+     * @see #onRequestPermissionsResult(int, String[], int[])
+     */
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
-// permission was given for internet and coarse  and library was added in the gradle module app
-public class Driversmap extends FragmentActivity implements OnMapReadyCallback,
-
-        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+    /**
+     * Flag indicating whether a requested permission has been denied after returning in
+     * {@link #onRequestPermissionsResult(int, String[], int[])}.
+     */
+    private boolean mPermissionDenied = false;
 
     private GoogleMap mMap;
-    GoogleApiClient mgoogleapiclient;
-    Location mlastlocation;
-    LocationRequest mlocationrequest;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driversmap);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        SupportMapFragment mapFragment =
+                (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
+    @Override
+    public void onMapReady(GoogleMap map) {
+        try{
 
-    @Override   //for getting the current location
-    public void onMapReady(GoogleMap googleMap) { //a boiler codewas here but it was removed and the following code was added to it{
+            mMap = map;
+            mMap.setOnMyLocationButtonClickListener(this);
+            mMap.setOnMyLocationClickListener(this);
+            enableMyLocation();
 
-        mMap = googleMap;
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .bearing(90)                // Sets the orientation of the camera to east
+                        .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+
+        }catch(SecurityException ex){
+
+        }
+    }
+
+    /**
+     * Enables the My Location layer if the fine location permission has been granted.
+     */
+    private void enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Permission to access the location is missing.
+            PermissionUtils .requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
+                    Manifest.permission.ACCESS_FINE_LOCATION, true);
+        } else if (mMap != null) {
+            // Access to the location has been granted to the app.
+            mMap.setMyLocationEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+        // Return false so that we
+        // don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false;
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode != LOCATION_PERMISSION_REQUEST_CODE) {
             return;
         }
-        buildGoogleApiClient();
-        mMap.setMyLocationEnabled(true);
 
-
-    }
-
-    protected synchronized void buildGoogleApiClient(){
-
-        mgoogleapiclient= new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mgoogleapiclient.connect();//this will allow you to use the API
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-mlastlocation= location;
-LatLng latLng= new LatLng(location.getLatitude(),location.getLongitude());
-
-mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-mMap.animateCamera(CameraUpdateFactory.zoomTo(1)); //extra efizi , just to know when location changes
-    }
-
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-        //create a request to get location ; this changes every second
-
-
-        mlocationrequest = new LocationRequest();
-        mlocationrequest.setInterval(1000); //1000 millisecond
-        mlocationrequest.setFastestInterval(1000); //this depending on the app; because this is an uber app
-        mlocationrequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //the location gotten would be the best location found for the driver/user but it drains a lot of battery
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
+        if (PermissionUtils.isPermissionGranted(permissions, grantResults,
+                Manifest.permission.ACCESS_FINE_LOCATION)) {
+            // Enable the my location layer if the permission has been granted.
+            enableMyLocation();
+        } else {
+            // Display the missing permission error dialog when the fragments resume.
+            mPermissionDenied = true;
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mgoogleapiclient, mlocationrequest, this); // if you dont call this, you will only get a location once but if you call it , it will refresh within intervals
-        
-
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
-
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        if (mPermissionDenied) {
+            // Permission was not granted, display error dialog.
+            showMissingPermissionError();
+            mPermissionDenied = false;
+        }
     }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+    /**
+     * Displays a dialog with error message explaining that the location permission is missing.
+     */
+    private void showMissingPermissionError() {
+        PermissionUtils.PermissionDeniedDialog
+                .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
-
-//setting the uer's location
-
-
-
-
-
 
 }
