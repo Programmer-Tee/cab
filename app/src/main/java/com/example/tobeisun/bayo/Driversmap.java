@@ -11,6 +11,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 import android.Manifest;
 import android.content.Context;
@@ -31,7 +33,7 @@ import android.widget.Toast;
  * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
  * time. If the permission has not been granted, the Activity is finished with an error message.
  */
-class MapsActivity extends AppCompatActivity
+class Driversmap extends AppCompatActivity
         implements
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
@@ -87,12 +89,19 @@ class MapsActivity extends AppCompatActivity
                         .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                         .build();                   // Creates a CameraPosition from the builder
                 map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+
+
             }
 
         }catch(SecurityException ex){
 
         }
+
+
     }
+
+
 
     /**
      * Enables the My Location layer if the fine location permission has been granted.
@@ -112,6 +121,7 @@ class MapsActivity extends AppCompatActivity
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "MyLocation button clicked", Toast.LENGTH_SHORT).show();
+
         // Return false so that we
         // don't consume the event and the default behavior still occurs
         // (the camera animates to the user's current position).
@@ -120,7 +130,9 @@ class MapsActivity extends AppCompatActivity
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" + location, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Current location:\n" +location, Toast.LENGTH_LONG).show();
+
+
     }
 
     @Override
