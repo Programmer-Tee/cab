@@ -71,7 +71,40 @@ public class Driversmap extends AppCompatActivity
             @Override
             public void onPlaceSelected(Place place) {
 
-                Log.d("Maps", "Place selected: " + place.getName());
+                Log.d("Maps", "Place selected: " + place.getName()); //
+            double lat= place.getLatLng().latitude;
+            double longg= place.getLatLng().longitude ;
+
+
+
+
+                Toast.makeText(Driversmap.this, "the latitude is" +lat, Toast.LENGTH_SHORT).show();
+                Toast.makeText(Driversmap.this, "the longitude is" +longg, Toast.LENGTH_SHORT).show();
+
+
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, longg), 13));
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(lat, longg))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .bearing(90)                // Sets the orientation of the camera to east
+                        .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                mMap.addMarker((new MarkerOptions()
+                        .position(new LatLng(lat,longg))
+                        ));
+
+
+
+
+
+
+
+
+
+
             }
 
             @Override
