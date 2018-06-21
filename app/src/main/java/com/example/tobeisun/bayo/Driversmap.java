@@ -66,13 +66,14 @@ public class Driversmap extends AppCompatActivity
     DatabaseReference dataa ;
     double lat;
     double longg;
+    String placeName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driversmap);
 
-        dataa= FirebaseDatabase.getInstance().getReference("Messages") ;
+        dataa= FirebaseDatabase.getInstance().getReference() ;
 
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -82,6 +83,7 @@ public class Driversmap extends AppCompatActivity
                 Log.d("Maps", "Place selected: " + place.getName()); //
            lat= place.getLatLng().latitude;
              longg= place.getLatLng().longitude ;
+             placeName = place.getName().toString();
 
 
 
@@ -248,12 +250,11 @@ private void zoomToLocation(){
     private void savelatandlong()
     {
 
+           SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName);
+              dataa.child("SaveLatLong").push().setValue(saveLatLong);
 
 
 
-
-
-            dataa.setValue(lat) ;
             Toast.makeText(this,"latitude saved",Toast.LENGTH_LONG).show();
 
 
