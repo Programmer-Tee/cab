@@ -25,12 +25,15 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -60,11 +63,16 @@ public class Driversmap extends AppCompatActivity
 
     private GoogleMap mMap;
     PlaceAutocompleteFragment placeAutoComplete;
+    DatabaseReference dataa ;
+    double lat;
+    double longg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driversmap);
+
+        dataa= FirebaseDatabase.getInstance().getReference("Messages") ;
 
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -72,8 +80,8 @@ public class Driversmap extends AppCompatActivity
             public void onPlaceSelected(Place place) {
 
                 Log.d("Maps", "Place selected: " + place.getName()); //
-            double lat= place.getLatLng().latitude;
-            double longg= place.getLatLng().longitude ;
+           lat= place.getLatLng().latitude;
+             longg= place.getLatLng().longitude ;
 
 
 
@@ -97,10 +105,11 @@ public class Driversmap extends AppCompatActivity
                         ));
 
 
+                //DATABASE TO SAVE THE LATITUDE AND LONGITUDE
 
 
 
-
+                savelatandlong();
 
 
 
@@ -235,4 +244,23 @@ private void zoomToLocation(){
 }
 
 
-}
+
+    private void savelatandlong()
+    {
+
+
+
+
+
+
+            dataa.setValue(lat) ;
+            Toast.makeText(this,"latitude saved",Toast.LENGTH_LONG).show();
+
+
+
+        }
+
+
+
+    }
+
