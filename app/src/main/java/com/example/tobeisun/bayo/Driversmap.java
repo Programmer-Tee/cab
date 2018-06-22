@@ -26,7 +26,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -34,6 +37,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.firebase.ui.database.FirebaseListAdapter;
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -67,6 +71,7 @@ public class Driversmap extends AppCompatActivity
     double lat;
     double longg;
     String placeName;
+    private FirebaseListAdapter <DriverLogin> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -250,7 +255,23 @@ private void zoomToLocation(){
     private void savelatandlong()
     {
 
-           SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName);
+
+        adapter = new FirebaseListAdapter<DriverLogin>(this, DriverLogin.class, R.layout.fui_phone_layout, FirebaseDatabase.getInstance().getReference()) {
+            @Override
+            protected void populateView(View v, DriverLogin model, int position) {
+                // Get references to the views of message.xml
+                TextView messageText = (TextView) v.findViewById(R.id.driver_email);
+
+
+
+
+
+            }
+        };
+
+
+
+        SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName);
               dataa.child("SaveLatLong").push().setValue(saveLatLong);
 
 
