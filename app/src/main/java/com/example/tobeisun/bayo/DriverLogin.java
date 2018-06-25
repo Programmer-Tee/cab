@@ -94,9 +94,6 @@ public class DriverLogin extends AppCompatActivity {
 
                 //this part is to move the email to the diversmap activity so as to save it alongside the others in firebase database
 
-                intent = new Intent(getApplicationContext(),Driversmap.class);
-                intent.putExtra("EdiTtEXTvALUE", Driveremail.getText().toString());
-                startActivity(intent);
 
             }
         });
@@ -141,7 +138,9 @@ public class DriverLogin extends AppCompatActivity {
                                 loadingbar.dismiss();
 
                                 Intent x= new Intent(DriverLogin.this,Driversmap.class);
-                                        startActivity(x);
+                              x.putExtra("EdiTtEXTvALUE", Driveremail.getText().toString());
+
+                                startActivity(x);
 
                             }
 
