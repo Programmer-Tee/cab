@@ -29,6 +29,7 @@ import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
@@ -37,7 +38,7 @@ import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.firebase.ui.database.FirebaseListAdapter;
+
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -71,12 +72,19 @@ public class Driversmap extends AppCompatActivity
     double lat;
     double longg;
     String placeName;
-    private FirebaseListAdapter <DriverLogin> adapter;
+    String thenn ;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driversmap);
+
+
+
+
 
         dataa= FirebaseDatabase.getInstance().getReference() ;
 
@@ -89,6 +97,9 @@ public class Driversmap extends AppCompatActivity
            lat= place.getLatLng().latitude;
              longg= place.getLatLng().longitude ;
              placeName = place.getName().toString();
+
+                thenn= getIntent().getStringExtra("EdiTtEXTvALUE");
+
 
 
 
@@ -256,22 +267,14 @@ private void zoomToLocation(){
     {
 
 
-        adapter = new FirebaseListAdapter<DriverLogin>(this, DriverLogin.class, R.layout.fui_phone_layout, FirebaseDatabase.getInstance().getReference()) {
-            @Override
-            protected void populateView(View v, DriverLogin model, int position) {
-                // Get references to the views of message.xml
-                TextView messageText = (TextView) v.findViewById(R.id.driver_email);
 
 
 
-
-
-            }
-        };
+       // dataa.child(getIntent().getStringExtra("EdiTtEXTvALUE"));
 
 
 
-        SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName);
+        SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName,thenn);
               dataa.child("SaveLatLong").push().setValue(saveLatLong);
 
 

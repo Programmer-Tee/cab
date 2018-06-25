@@ -22,4 +22,6 @@
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
         />
+
+
 </LinearLayout>
