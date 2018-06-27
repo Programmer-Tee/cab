@@ -138,7 +138,7 @@ public class DriverLogin extends AppCompatActivity {
                                 loadingbar.dismiss();
 
                                 Intent x= new Intent(DriverLogin.this,Driversmap.class);
-                              x.putExtra("EdiTtEXTvALUE", Driveremail.getText().toString());
+                              x.putExtra("getemail", Driveremail.getText().toString());
 
                                 startActivity(x);
 

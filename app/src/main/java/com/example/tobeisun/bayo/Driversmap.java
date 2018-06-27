@@ -39,6 +39,9 @@ import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /**
  * This demo shows how GMS Location can be used to check for changes to the users location.  The
@@ -72,8 +75,11 @@ public class Driversmap extends AppCompatActivity
     double lat;
     double longg;
     String placeName;
-    String thenn ;
+    String email ;
 
+    String date;
+
+    String pattern = "yyyy-MM-dd";
 
 
 
@@ -81,7 +87,6 @@ public class Driversmap extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driversmap);
-
 
 
 
@@ -98,13 +103,17 @@ public class Driversmap extends AppCompatActivity
              longg= place.getLatLng().longitude ;
              placeName = place.getName().toString();
 
-                thenn= getIntent().getStringExtra("EdiTtEXTvALUE");
+                email= getIntent().getStringExtra("getemail");
 
 
 
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
+                date= simpleDateFormat.format(new Date());
 
 
-                Toast.makeText(Driversmap.this, "the latitude is" +lat, Toast.LENGTH_SHORT).show();
+
+;
                 Toast.makeText(Driversmap.this, "the longitude is" +longg, Toast.LENGTH_SHORT).show();
 
 
@@ -274,7 +283,7 @@ private void zoomToLocation(){
 
 
 
-        SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName,thenn);
+        SaveLatLong saveLatLong = new SaveLatLong(lat,longg,placeName,email,date);
               dataa.child("SaveLatLong").push().setValue(saveLatLong);
 
 

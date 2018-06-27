@@ -42,7 +42,7 @@
 
         <activity
             android:name=".Driversmap"
-            android:label="@string/title_activity_driversmap"></activity>
+            android:label="@string/title_activity_driversmap" />
     </application>
 
 </manifest>
