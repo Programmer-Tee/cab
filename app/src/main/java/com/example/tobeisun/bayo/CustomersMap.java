@@ -2,18 +2,15 @@ package com.example.tobeisun.bayo;
 
 
 
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener;
 
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.android.gms.maps.GoogleMap.OnMyLocationClickListener;
+
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -25,12 +22,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
@@ -49,7 +41,7 @@ import java.util.Date;
  * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
  * time. If the permission has not been granted, the Activity is finished with an error message.
  */
-public class Driversmap extends AppCompatActivity
+public class CustomersMap extends AppCompatActivity
         implements
         GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
@@ -86,7 +78,7 @@ public class Driversmap extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driversmap);
+        setContentView(R.layout.activity_customers_map);
 
 
 
@@ -114,7 +106,7 @@ public class Driversmap extends AppCompatActivity
 
 
 ;
-                Toast.makeText(Driversmap.this, "the longitude is" +longg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(CustomersMap.this, "the longitude is" +longg, Toast.LENGTH_SHORT).show();
 
 
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, longg), 13));

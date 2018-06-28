@@ -174,6 +174,11 @@ custregister.setEnabled(false);
                         if (task.isSuccessful()) {
                             Toast.makeText(CustomerLogin.this, "Successful Login", Toast.LENGTH_LONG).show();
                             loadingbar.dismiss();
+
+                            Intent x= new Intent(CustomerLogin.this,CustomersMap.class);
+                            x.putExtra("getemail", custemail.getText().toString());
+
+                            startActivity(x);
                         } else {
                             Toast.makeText(CustomerLogin.this, "Login failed , please try again ", Toast.LENGTH_LONG).show();
                             loadingbar.dismiss();
