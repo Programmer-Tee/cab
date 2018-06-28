@@ -13,6 +13,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -28,6 +29,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -86,6 +88,30 @@ public class CustomersMap extends AppCompatActivity
         dataa= FirebaseDatabase.getInstance().getReference() ;
 
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
+
+        //to make it come here first on launching so it will check if the user truly has an account before telling him to go to login page...
+
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            // Start sign in/sign up activity
+            startActivity(new Intent(CustomersMap.this, CustomerLogin.class));
+
+            finish();
+        } else {
+            // User is already signed in. Therefore, display
+            // a welcome Toast
+
+
+            // Load chat room contents
+            startActivity(new Intent(CustomersMap.this,CustomersMap.class));
+        }
+
+
+
+
+
+
+
+
         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
