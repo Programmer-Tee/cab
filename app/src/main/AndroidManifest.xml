@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
         <activity android:name=".Welcome" />
         <activity android:name=".DriverLogin" />
         <activity android:name=".CustomerLogin" />
@@ -43,7 +43,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RequestTaxify"></activity>
+        <activity android:name=".RequestTaxify" />
+        <activity
+            android:name=".CustomerDestinationMap"
+            android:label="@string/title_activity_customer_destination_map" />
+        <activity android:name=".PickAVehicle" />
+        <activity android:name=".SetTimeandDate"></activity>
     </application>
 
 </manifest>
