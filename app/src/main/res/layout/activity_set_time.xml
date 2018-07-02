@@ -18,10 +18,29 @@
         tools:layout_editor_absoluteY="31dp" />
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/spinnertime"
         android:layout_width="368dp"
         android:layout_height="84dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="319dp" />
+
+
+    <Spinner
+        android:id="@+id/spinnergmt"
+        android:layout_width="368dp"
+        android:layout_height="84dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="319dp" />
+
+    <Spinner
+        android:id="@+id/spinnerdate"
+        android:layout_width="368dp"
+        android:layout_height="84dp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="319dp" />
+
+
+
+
 
 </android.support.constraint.ConstraintLayout>
