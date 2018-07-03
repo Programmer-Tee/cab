@@ -43,6 +43,13 @@ Spinner spinnerdate;
 
         //dropdown for the date
 
+
+        ArrayAdapter<CharSequence> adapterdate = ArrayAdapter.createFromResource(this, R.array.date, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerdate.setAdapter(adapterdate);
+        spinnerdate.setOnItemSelectedListener(this);
+
+
     }
 
     @Override

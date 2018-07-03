@@ -101,8 +101,7 @@ public class CustomersMap extends AppCompatActivity
             // a welcome Toast
 
 
-            // Load chat room contents
-            startActivity(new Intent(CustomersMap.this,CustomersMap.class));
+           // startActivity(new Intent(CustomersMap.this,CustomersMap.class));
         }
 
 
@@ -155,6 +154,33 @@ public class CustomersMap extends AppCompatActivity
 
 
                 savelatandlong();
+
+
+                Thread thread = new Thread ()
+                {
+                    @Override
+                    public void run() {
+                        try
+                        {
+                            sleep(3000); // to delay for 3 seconds
+
+                        }
+
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+
+                        }
+
+                        finally
+                        {
+                           startActivity(new Intent(CustomersMap.this,RequestTaxify.class));
+                        }
+
+
+
+                    }
+                } ;
 
 
 
