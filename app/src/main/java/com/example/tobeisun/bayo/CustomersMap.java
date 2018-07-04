@@ -184,6 +184,8 @@ public class CustomersMap extends AppCompatActivity
                 } ;
 
 
+                thread.start();
+
 
 
             }

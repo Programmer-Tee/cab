@@ -147,7 +147,7 @@ public class CustomerDestinationMap extends FragmentActivity implements
 
                         finally
                         {
-                            startActivity(new Intent(CustomerDestinationMap.this,RequestTaxify.class));
+                            startActivity(new Intent(CustomerDestinationMap.this,SetTimeandDate.class));
                         }
 
 

@@ -34,5 +34,14 @@ TextView lateruse;
                 startActivity(new Intent(RequestTaxify.this, SetTimeandDate.class));
             }
         });
+
+
+        lateruse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(RequestTaxify.this, CustomerDestinationMap.class));
+            }
+        });
+
     }
 }
