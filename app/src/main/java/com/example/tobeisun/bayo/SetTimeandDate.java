@@ -21,6 +21,7 @@ Spinner spinnerdate;
 
         spinner = (Spinner) findViewById(R.id.spinnertime);
         spinnergmt =(Spinner) findViewById(R.id.spinnergmt);
+        spinnerdate=(Spinner) findViewById(R.id.spinnerdate);
 
 
         //dropdown for the time

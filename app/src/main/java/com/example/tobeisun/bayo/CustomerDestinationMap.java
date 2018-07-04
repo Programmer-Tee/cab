@@ -8,11 +8,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -160,6 +162,7 @@ public class CustomerDestinationMap extends FragmentActivity implements
 
             }
 
+
             @Override
             public void onError(Status status) {
                 Log.d("Maps", "An error occurred: " + status);
@@ -169,6 +172,10 @@ public class CustomerDestinationMap extends FragmentActivity implements
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        ;
+
+
     }
 
 
