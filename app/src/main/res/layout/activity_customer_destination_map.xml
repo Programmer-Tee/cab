@@ -14,12 +14,25 @@
         android:layout_height="wrap_content"
         android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"         />
 
+
+    <Button
+        android:id="@+id/buttonrequestcab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MAKE A REQUEST "
+        android:background="@color/colorPrimaryDark"
+
+        android:textColor="@android:color/white"
+        android:textSize="16sp"/>
+
+
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/mapdestination"
         class="com.google.android.gms.maps.SupportMapFragment"
         />
+
 
 
 </LinearLayout>

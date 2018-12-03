@@ -1,10 +1,12 @@
 package com.example.tobeisun.bayo;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -13,6 +15,7 @@ public class SetTimeandDate extends AppCompatActivity implements AdapterView.OnI
 Spinner spinner ;
 Spinner spinnergmt ;
 Spinner spinnerdate;
+Button proceed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,16 @@ Spinner spinnerdate;
         spinner = (Spinner) findViewById(R.id.spinnertime);
         spinnergmt =(Spinner) findViewById(R.id.spinnergmt);
         spinnerdate=(Spinner) findViewById(R.id.spinnerdate);
+        proceed=(Button) findViewById(R.id.buttonproceed);
+
+
+
+        proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(SetTimeandDate.this,FinalFinal.class));
+            }
+        });
 
 
         //dropdown for the time

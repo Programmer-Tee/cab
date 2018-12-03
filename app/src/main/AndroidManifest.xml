@@ -48,7 +48,9 @@
             android:name=".CustomerDestinationMap"
             android:label="@string/title_activity_customer_destination_map" />
         <activity android:name=".PickAVehicle" />
-        <activity android:name=".SetTimeandDate"></activity>
+        <activity android:name=".SetTimeandDate" />
+        <activity android:name=".SetDestination" />
+        <activity android:name=".FinalFinal"></activity>
     </application>
 
 </manifest>

@@ -28,7 +28,7 @@ public class CustomerLogin extends AppCompatActivity {
     TextView custstatus;
     TextView custreglink ;
     FirebaseAuth auth;
-ProgressDialog loadingbar ;
+ ProgressDialog loadingbar ;
 
 
     @Override

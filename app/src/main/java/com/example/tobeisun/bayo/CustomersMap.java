@@ -9,6 +9,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.Manifest;
@@ -24,17 +25,21 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 
 /**
@@ -70,8 +75,10 @@ public class CustomersMap extends AppCompatActivity
     double longg;
     String placeName;
     String email ;
+    Button setdestination;
 
     String date;
+    Marker marker ;
 
     String pattern = "yyyy-MM-dd";
 
@@ -84,7 +91,18 @@ public class CustomersMap extends AppCompatActivity
 
 
 
+setdestination= (Button)findViewById(R.id.buttonsetdest);
+setdestination.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        startActivity(new Intent(CustomersMap.this, SetDestination.class));
 
+        Intent intent = new Intent(getBaseContext(), FinalFinal.class);
+        intent.putExtra("LATITUDE_ID", lat);
+        intent.putExtra("LONGITUDE_ID", longg);
+        startActivity(intent);
+    }
+});
         dataa= FirebaseDatabase.getInstance().getReference() ;
 
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
@@ -115,9 +133,16 @@ public class CustomersMap extends AppCompatActivity
             @Override
             public void onPlaceSelected(Place place) {
 
-                Log.d("Maps", "Place selected: " + place.getName()); //
+               /* Log.d("Maps", "Place selected: " + place.getName()); //
            lat= place.getLatLng().latitude;
-             longg= place.getLatLng().longitude ;
+                longg= place.getLatLng().longitude ;
+
+
+
+
+
+
+
              placeName = place.getName().toString();
 
                 email= getIntent().getStringExtra("getemail");
@@ -157,7 +182,7 @@ public class CustomersMap extends AppCompatActivity
                 savelatandlong();
 
 
-                Thread thread = new Thread ()
+              /*)  Thread thread = new Thread ()
                 {
                     @Override
                     public void run() {
@@ -175,26 +200,63 @@ public class CustomersMap extends AppCompatActivity
 
                         finally
                         {
-                           startActivity(new Intent(CustomersMap.this,RequestTaxify.class));
-                        }
+                           startActivity(new Intent(CustomersMap.this,CustomerDestinationMap.class));
 
+
+                )
 
 
                     }
                 } ;
 
 
+
+
+
+
                 thread.start();
 
+*/
+
+                lat= place.getLatLng().latitude;
+                longg= place.getLatLng().longitude ;
+
+
+
+                 final LatLng latlngloc1 = new LatLng(lat,longg);
+                final LatLng latLngloc = place.getLatLng();
+
+
+
+                PolylineOptions poption= new PolylineOptions().add(latLngloc).add(latlngloc1).width(5).color(android.R.color.holo_red_dark).geodesic(true);
+                mMap.addPolyline(poption);
+                //to zoom the camerav
+
+
+
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngloc,13));
+
+
+                if(marker!=null)
+                {
+                    marker.remove();
+                }
+
+
+                marker =mMap.addMarker(new MarkerOptions().position(latLngloc).title(place.getName().toString()));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(12),2000, null);
 
 
             }
+
 
             @Override
             public void onError(Status status) {
                 Log.d("Maps", "An error occurred: " + status);
             }
         });
+
+
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -210,7 +272,14 @@ public class CustomersMap extends AppCompatActivity
         mMap.setOnMyLocationButtonClickListener(this);
         mMap.setOnMyLocationClickListener(this);
         enableMyLocation();
+
+
+
     }
+
+
+
+
 
 
 
@@ -283,6 +352,7 @@ public class CustomersMap extends AppCompatActivity
     }
 
 
+
     /**
      * Zooms to current location
      */
@@ -315,6 +385,7 @@ private void zoomToLocation(){
     }catch(SecurityException ex){
 
     }
+
 }
 
 
@@ -340,6 +411,7 @@ private void zoomToLocation(){
 
 
         }
+
 
 
 

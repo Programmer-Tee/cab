@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
@@ -58,7 +59,7 @@ public class CustomerDestinationMap extends FragmentActivity implements
     double longg;
     String placeName;
     String email ;
-
+Button makearequest;
     String date;
 
     String pattern = "yyyy-MM-dd";
@@ -79,7 +80,37 @@ public class CustomerDestinationMap extends FragmentActivity implements
 
 
 
+makearequest= (Button) findViewById(R.id.buttonrequestcab) ;
 
+makearequest.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        startActivity(new Intent(CustomerDestinationMap.this, RequestTaxify.class));
+
+
+        Intent sendingIntent = new Intent(CustomerDestinationMap.this,FinalFinal.class);
+
+        sendingIntent.putExtra("doubleValuelat", lat);
+        sendingIntent.putExtra("doubleValuelong", longg);
+        startActivity(sendingIntent);
+
+
+
+        /*Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            double value = extras.getDouble("LATITUDE_ID");
+            double valuelong =extras.getDouble("LONGITUDE_ID");
+            //The key argument here must match that used in the other activity
+
+            Intent intent2 = new Intent(getBaseContext(), FinalFinal.class);
+            intent2.putExtra("latitude1",value);
+            intent2.putExtra("LONGITUDE1", valuelong);
+            startActivity(intent2);
+
+
+        }
+    */}
+});
 
 
 
@@ -91,9 +122,15 @@ public class CustomerDestinationMap extends FragmentActivity implements
             public void onPlaceSelected(Place place) {
 
                 Log.d("Maps", "Place selected: " + place.getName()); //
-                lat= place.getLatLng().latitude;
+               lat= place.getLatLng().latitude;
                 longg= place.getLatLng().longitude ;
                 placeName = place.getName().toString();
+
+
+
+
+
+
 
                 email= getIntent().getStringExtra("getemail");
 
@@ -170,7 +207,7 @@ public class CustomerDestinationMap extends FragmentActivity implements
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.mapdestination);
         mapFragment.getMapAsync(this);
 
         ;

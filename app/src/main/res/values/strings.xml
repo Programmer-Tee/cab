@@ -5,7 +5,7 @@
     <string name="title_activity_customer_destination_map">Map</string>
 
 
-    <string-array name="time" >
+    <string-array name="time">
         <item>6</item>
         <item>7</item>
         <item>8</item>
@@ -21,7 +21,7 @@
 
     </string-array>
 
-    <string-array name="gmt" >
+    <string-array name="gmt">
 
         <item>AM</item>
         <item>PM</item>

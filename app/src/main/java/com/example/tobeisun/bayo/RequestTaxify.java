@@ -31,7 +31,7 @@ TextView lateruse;
         request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(RequestTaxify.this, CustomerDestinationMap.class));
+                startActivity(new Intent(RequestTaxify.this, PickAVehicle.class));
             }
         });
 
