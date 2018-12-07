@@ -37,6 +37,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.Console;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
@@ -71,12 +73,14 @@ public class CustomersMap extends AppCompatActivity
     private GoogleMap mMap;
     PlaceAutocompleteFragment placeAutoComplete;
     DatabaseReference dataa ;
-    double lat;
+    public double lat;
     double longg;
     String placeName;
     String email ;
     Button setdestination;
 
+    private LatLng latlngloc3 =null;
+private  LatLng latlngloc2 = null;
     String date;
     Marker marker ;
 
@@ -92,17 +96,8 @@ public class CustomersMap extends AppCompatActivity
 
 
 setdestination= (Button)findViewById(R.id.buttonsetdest);
-setdestination.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        startActivity(new Intent(CustomersMap.this, SetDestination.class));
 
-        Intent intent = new Intent(getBaseContext(), FinalFinal.class);
-        intent.putExtra("LATITUDE_ID", lat);
-        intent.putExtra("LONGITUDE_ID", longg);
-        startActivity(intent);
-    }
-});
+
         dataa= FirebaseDatabase.getInstance().getReference() ;
 
         placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
@@ -223,28 +218,31 @@ setdestination.setOnClickListener(new View.OnClickListener() {
 
 
 
-                 final LatLng latlngloc1 = new LatLng(lat,longg);
-                final LatLng latLngloc = place.getLatLng();
+                 //final LatLng latlngloc1 = new LatLng(lat,longg);
+
+              //  final LatLng latLngloc = place.getLatLng(); //this is for the searched location
+                latlngloc2= place.getLatLng();
+
+
+                Log.d("the second latlng is ", "" +latlngloc2 );
+          //      Log.d("first latlng", "" + latlngloc1 );
+
+              /*  setdestination.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                    double v=    CalculationByDistance(latlngloc3 ,latlngloc2);
+                        Log.d("the second latlng is ", "" + latlngloc2 );
+                    }
+                }); */
+                    CalculationByDistance(latlngloc3 ,latlngloc2 );
 
 
 
-                PolylineOptions poption= new PolylineOptions().add(latLngloc).add(latlngloc1).width(5).color(android.R.color.holo_red_dark).geodesic(true);
-                mMap.addPolyline(poption);
-                //to zoom the camerav
 
 
 
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngloc,13));
-
-
-                if(marker!=null)
-                {
-                    marker.remove();
-                }
-
-
-                marker =mMap.addMarker(new MarkerOptions().position(latLngloc).title(place.getName().toString()));
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(12),2000, null);
+                marker =mMap.addMarker(new MarkerOptions().position(latlngloc2).title(place.getName().toString()));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(18),2000, null);
 
 
             }
@@ -296,24 +294,125 @@ setdestination.setOnClickListener(new View.OnClickListener() {
             // Access to the location has been granted to the app.
             mMap.setMyLocationEnabled(true);
             zoomToLocation();
+
+
         }
     }
 
     @Override
     public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "MyLocation button clicked", Toast             .LENGTH_SHORT).show();
+        try{
 
-        // Return false so that we
-        // don't consume the event and the default behavior still occurs
-        // (the camera animates to the user's current position).
+
+
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+           /* mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); */
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13));
+
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .bearing(90)                // Sets the orientation of the camera to east
+                        .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+
+
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                 latlngloc3 =new LatLng(location.getLatitude(), location.getLongitude()); //this is for the searched location
+                Log.d("where you are latlng is ", "" + latlngloc3 );
+
+                marker =mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude())));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(18),2000, null);
+
+
+if(mMap!=null) {
+
+    PolylineOptions poption = new PolylineOptions().add(latlngloc2).add(latlngloc3).width(5).geodesic(true).visible(true);
+    mMap.addPolyline(poption);
+    //to zoom the camerav
+
+
+    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlngloc2, 13));
+}
+
+
+                if(marker!=null)
+                {
+                    marker.remove();
+                }
+
+
+            }
+
+        }catch(SecurityException ex){
+
+        }
         return false;
     }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
-        Toast.makeText(this, "Current location:\n" +location, Toast.LENGTH_LONG).show();
+        try{
 
 
+
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+
+            location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
+            if (location != null)
+            {
+           /* mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();              2      // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); */
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13));
+                latlngloc3  =new LatLng(location.getLatitude(), location.getLongitude()); //this is for the searched location
+                Log.d("where you are latlng is ", "" + latlngloc3  );
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(17)                   // Sets the zoom
+                        .bearing(90)                // Sets the orientation of the camera to east
+                        .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                        .build();                   // Creates a CameraPosition from the builder
+
+
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                marker =mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude())));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(18),2000, null);
+
+
+
+
+
+            }
+
+        }catch(SecurityException ex){
+
+        }
     }
 
     @Override
@@ -350,7 +449,45 @@ setdestination.setOnClickListener(new View.OnClickListener() {
         PermissionUtils.PermissionDeniedDialog
                 .newInstance(true).show(getSupportFragmentManager(), "dialog");
     }
+    public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult % 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.d("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+        double price;
+        if(kmInDec==1){
+            price=58;
+            Log.d("THE PRICE IS", "" + price );
 
+
+        }
+else{
+            price =kmInDec*300;
+            Log.d("THE PRICE IS", "" + price );
+        }
+
+        double d =Radius * c;
+        System.out.println(d);
+        return d;
+
+
+    }
 
 
     /**
@@ -368,7 +505,7 @@ private void zoomToLocation(){
         Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, false));
         if (location != null)
         {
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
+           /* mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
@@ -376,7 +513,30 @@ private void zoomToLocation(){
                     .bearing(90)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition)); */
+
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(),location.getLongitude()),13));
+
+
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                    .zoom(17)                   // Sets the zoom
+                    .bearing(90)                // Sets the orientation of the camera to east
+                    .tilt(40)                   // Sets the tilt of the camera to 30 degrees
+                    .build();                   // Creates a CameraPosition from the builder
+
+
+            latlngloc3  =new LatLng(location.getLatitude(), location.getLongitude()); //this is for the searched location
+            Log.d("where you are latlng is ", "" + latlngloc3  );
+            //      Log.d("first latlng", "" + latlngloc1 );
+
             mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            marker =mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(),location.getLongitude())));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(18),2000, null);
+
+
 
 
 
@@ -407,6 +567,7 @@ private void zoomToLocation(){
 
 
             Toast.makeText(this,"latitude saved",Toast.LENGTH_LONG).show();
+        Log.d("the third latlng is", "" + saveLatLong );
 
 
 
