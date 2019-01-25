@@ -12,7 +12,8 @@ buildscript {
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
-        classpath 'com.google.gms:google-services:3.1.1'
+        classpath 'com.google.gms:google-services:4.0.1'
+//        classpath 'com.android.tools.build:gradle:3.2.0'
     }
 }
 
@@ -20,6 +21,13 @@ allprojects {
     repositories {
         google()
         jcenter()
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+//        maven { url "https://dl.google.com/dl/android/maven2/com/google/firebase/firebase-database/16.0.5/firebase-database-16.0.5-15.0.0.jar" }
     }
 }
 

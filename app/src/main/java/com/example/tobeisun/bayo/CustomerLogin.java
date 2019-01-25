@@ -18,17 +18,18 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class CustomerLogin extends AppCompatActivity {
 
     EditText custemail;
-    EditText custpassword ;
-    Button custlogin ;
+    EditText custpassword;
+    Button custlogin;
     Button custregister;
     TextView custstatus;
-    TextView custreglink ;
+    TextView custreglink;
     FirebaseAuth auth;
- ProgressDialog loadingbar ;
+    ProgressDialog loadingbar;
 
 
     @Override
@@ -38,64 +39,51 @@ public class CustomerLogin extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-loadingbar= new ProgressDialog(this);
+        loadingbar = new ProgressDialog(this);
 
 
-
-custemail= (EditText) findViewById(R.id.cust_email) ;
-custpassword=(EditText) findViewById(R.id.cust_password);
-custlogin=(Button) findViewById(R.id.cust_loginbtn);
-custregister=(Button) findViewById(R.id.cust_regbtn) ;
-custstatus=(TextView) findViewById(R.id.cust_status);
-custreglink=(TextView) findViewById(R.id.register_cust_link) ;
-
-
-custregister.setVisibility(View.INVISIBLE);
-custregister.setEnabled(false);
+        custemail = (EditText) findViewById(R.id.cust_email);
+        custpassword = (EditText) findViewById(R.id.cust_password);
+        custlogin = (Button) findViewById(R.id.cust_loginbtn);
+        custregister = (Button) findViewById(R.id.cust_regbtn);
+        custstatus = (TextView) findViewById(R.id.cust_status);
+        custreglink = (TextView) findViewById(R.id.register_cust_link);
 
 
-
-       custreglink.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-
-               custlogin.setVisibility(View.INVISIBLE);
+        custregister.setVisibility(View.INVISIBLE);
+        custregister.setEnabled(false);
 
 
-               custstatus.setText("Register");
-               custreglink.setVisibility(View.INVISIBLE);
-               custregister.setVisibility(View.VISIBLE);
-               custregister.setEnabled(true);
+        custreglink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                custlogin.setVisibility(View.INVISIBLE);
 
 
+                custstatus.setText("Register");
+                custreglink.setVisibility(View.INVISIBLE);
+                custregister.setVisibility(View.VISIBLE);
+                custregister.setEnabled(true);
 
 
+            }
+        });
 
 
-
-           }
-       });
-
-
-
-       custregister.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
+        custregister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
 
-               String email = custemail.getText().toString().trim();
-               String password = custpassword.getText().toString().trim();
+                String email = custemail.getText().toString().trim();
+                String password = custpassword.getText().toString().trim();
 
-               Registercustomer(email,password);
-
-
-                       }
-                   });
+                Registercustomer(email, password);
 
 
-
-
-
+            }
+        });
 
 
         custlogin.setOnClickListener(new View.OnClickListener() {
@@ -105,93 +93,105 @@ custregister.setEnabled(false);
                 String email = custemail.getText().toString().trim();
                 String password = custpassword.getText().toString().trim();
 
-                Logincustomer (email,password);
+                Logincustomer(email, password);
 
             }
         });
-               }
+
+//        checkIfUserIsLoggedIn();
+    }
 
     private void Registercustomer(String email, String password)
 
-        {
+    {
 
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(CustomerLogin.this, "Please enter email", Toast.LENGTH_LONG).show();
-            }
-            if (TextUtils.isEmpty(password)) {
-                Toast.makeText(CustomerLogin.this, "Please enter a valid password", Toast.LENGTH_LONG).show();
-            }
-            if(email.length() !=6 )
-            {
-                Toast.makeText(CustomerLogin.this,"Password must be 6 digits",Toast.LENGTH_LONG).show();
-            }
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(CustomerLogin.this, "Please enter email", Toast.LENGTH_LONG).show();
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(CustomerLogin.this, "Please enter a valid password", Toast.LENGTH_LONG).show();
+        }
+//        if (email.length() != 6) { // commented out this, since it password length you want to check
+        if (password.length() != 6) {
+            Toast.makeText(CustomerLogin.this, "Password must be 6 digits", Toast.LENGTH_LONG).show();
+        } else {
 
-
-
-            else {
-
-                loadingbar.setTitle("Customer registration");
-                loadingbar.setMessage("Please wait while we register your data ...");
-                loadingbar.show();
+            loadingbar.setTitle("Customer registration");
+            loadingbar.setMessage("Please wait while we register your data ...");
+            loadingbar.show();
 
 
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CustomerLogin.this, "Succeful Signup", Toast.LENGTH_LONG).show();
-                            loadingbar.dismiss();
-                        } else {
-                            Toast.makeText(CustomerLogin.this, "Sign up failed , please try again later", Toast.LENGTH_LONG).show();
-                            loadingbar.dismiss();
-                        }
-
+                    if (task.isSuccessful()) {
+                        Toast.makeText(CustomerLogin.this, "Succeful Signup", Toast.LENGTH_LONG).show();
+                        loadingbar.dismiss();
+                    } else {
+                        Toast.makeText(CustomerLogin.this, "Sign up failed , please try again later", Toast.LENGTH_LONG).show();
+                        loadingbar.dismiss();
                     }
-                });
 
-            }
-            }
+                }
+            });
 
-
-        private void Logincustomer (String email, String password){
-            if (TextUtils.isEmpty(email)) {
-                Toast.makeText(CustomerLogin.this, "Please enter email", Toast.LENGTH_LONG).show();
-            }
-            if (TextUtils.isEmpty(password)) {
-                Toast.makeText(CustomerLogin.this, "Please enter a valid password", Toast.LENGTH_LONG).show();
-            } else {
-
-                loadingbar.setTitle("Customer Login");
-                loadingbar.setMessage("Please wait  ...");
-                loadingbar.show();
+        }
+    }
 
 
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+    private void Logincustomer(final String email, final String password) {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(CustomerLogin.this, "Please enter email", Toast.LENGTH_LONG).show();
+        }
+        if (TextUtils.isEmpty(password)) {
+            Toast.makeText(CustomerLogin.this, "Please enter a valid password", Toast.LENGTH_LONG).show();
+        } else {
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(CustomerLogin.this, "Successful Login", Toast.LENGTH_LONG).show();
-                            loadingbar.dismiss();
+            loadingbar.setTitle("Customer Login");
+            loadingbar.setMessage("Please wait  ...");
+            loadingbar.show();
+//            background bg = new background(this);
+//            bg.execute(email, password);
 
-                            Intent x= new Intent(CustomerLogin.this,CustomersMap.class);
-                            x.putExtra("getemail", custemail.getText().toString());
 
-                            startActivity(x);
-                        } else {
-                            Toast.makeText(CustomerLogin.this, "Login failed , please try again ", Toast.LENGTH_LONG).show();
-                            loadingbar.dismiss();
-                        }
+            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
 
+                    if (task.isSuccessful()) {
+                        Toast.makeText(CustomerLogin.this, "Successful Login", Toast.LENGTH_LONG).show();
+                        loadingbar.dismiss();
+
+//                        Intent x = new Intent(CustomerLogin.this, CustomersMap.class);
+                        Intent x = new Intent(CustomerLogin.this, TestActivity.class);
+                        x.putExtra("email", custemail.getText().toString());
+
+                        startActivity(x);
+                    } else {
+                        Toast.makeText(CustomerLogin.this, "Login failed , please try again ", Toast.LENGTH_LONG).show();
+                        loadingbar.dismiss();
                     }
-                });
 
 
-            }
+                }
+            });
 
 
         }
 
+
     }
+
+
+//    private void checkIfUserIsLoggedIn(){
+//        FirebaseUser user = auth.getCurrentUser();
+//
+//        if(user != null){
+//            Intent intent = new Intent(this, CustomersMap.class);
+//            intent.putExtra("email", user.getEmail());
+//        }
+//    }
+
+}
 

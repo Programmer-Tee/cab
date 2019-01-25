@@ -23,8 +23,56 @@
           }
         },
         {
+          "client_id": "600228047502-h7hf22qiuv41ksf4ofboq2iqnu337qb3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tobeisun.bayo",
+            "certificate_hash": "e075ff8692294cd3b983de4b60c71fde39f428a7"
+          }
+        },
+        {
           "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",
           "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLO2YvePZsPfa6rMlyU81IOTwAAeTTjt8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600228047502:android:0220506a2f296565",
+        "android_client_info": {
+          "package_name": "com.example.tobeisun.cab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "600228047502-dqc75d41hk3io571b33gb8khd682drlm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tobeisun.cab",
+            "certificate_hash": "fff0086970d92096da014c94716c17ff1bc73d8e"
+          }
         },
         {
           "client_id": "600228047502-j8u45f60t2fpmuvvfgi3ksf08p71ljj3.apps.googleusercontent.com",

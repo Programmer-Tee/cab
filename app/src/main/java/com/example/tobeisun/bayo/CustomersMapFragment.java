@@ -1,6 +1,14 @@
 package com.example.tobeisun.bayo;
 
 
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.example.tobeisun.bayo.communication.FirebaseMessageAPI;
 import com.example.tobeisun.bayo.communication.Message;
 import com.example.tobeisun.bayo.communication.NotifyData;
@@ -79,25 +87,12 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-
-/**
- * This demo shows how GMS Location can be used to check for changes to the users location.  The
- * "My Location" button uses GMS Location to set the blue dot representing the users location.
- * Permission for {@link android.Manifest.permission#ACCESS_FINE_LOCATION} is requested at run
- * time. If the permission has not been granted, the Activity is finished with an error message.
- */
-public class CustomersMap extends AppCompatActivity
-        implements
+public class CustomersMapFragment extends Fragment implements
 //        GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback {
 
-    /**
-     * Request code for location permission request.
-     *
-     * @see #onRequestPermissionsResult(int, String[], int[])
-     */
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     public static double lat;
     static double longg;
@@ -107,10 +102,8 @@ public class CustomersMap extends AppCompatActivity
 
     DatabaseReference dataa;
     String placeName;
-    String profilesong;
-    String getstorename;
-    String getGetstorenumber;
     String email;
+    String profilesong;
     Button setdestination;
     PopupWindow popUp;
     LayoutInflater layoutInflater; //will allow a new layout inside the popup window
@@ -134,35 +127,49 @@ public class CustomersMap extends AppCompatActivity
     private LatLng originLoc = new LatLng(6.555997913408461,3.3317615303979746);
     private LatLng destinationLoc = new LatLng(0.0,0.0);
     private Firebase ref;
-    String getsong;
+    public String getsong;
+    public String getstorename;
+    public String getstorenumber;
 
+    public CustomersMapFragment() {
+        // Required empty public constructor
+    }
+
+
+    public static CustomersMapFragment newInstance() {
+        CustomersMapFragment fragment = new CustomersMapFragment();
+
+        return fragment;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customers_map);
+    }
 
-
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view =  inflater.inflate(R.layout.fragment_customers_map, container, false);
         //added by abeeb
         //get the email that was added to the intent from customer login activity
-        email = getIntent().getStringExtra("email");
-        profilesong = getIntent().getStringExtra("profilesong");
-
+        email = getActivity().getIntent().getStringExtra("email");
+        profilesong= getActivity().getIntent().getStringExtra("ProfileSong");
+        getstorename= getActivity().getIntent().getStringExtra("storename");
+        getstorenumber= getActivity().getIntent().getStringExtra("storenumber");
         Log.i("Got email", "onCreate: email: "+email);
-
 
         ref = new Firebase("https://bayo-f1055.firebaseio.com/SaveLatLong");
 
-        setdestination = (Button) findViewById(R.id.buttonsetdest);
-        linearLayout = (LinearLayout) findViewById(R.id.Linear);
-
-
+        setdestination = (Button) view.findViewById(R.id.buttonsetdest);
+        linearLayout = (LinearLayout) view.findViewById(R.id.Linear);
 
         dataa = FirebaseDatabase.getInstance().getReference();
 
-        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete);
+        placeAutoComplete = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete);
 
-        originPlaceAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.origin_autocomplete);
+        originPlaceAutoComplete = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.origin_autocomplete);
 
         setdestination.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -176,12 +183,11 @@ public class CustomersMap extends AppCompatActivity
 //                startActivity(sendingIntent);
 
 
-
                 //added by abeeb
                 //sending message to a particulat device starts here
                 HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
                 logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-                final  String key = "AIzaSyArCZO8yh0tUlvxqv7H_8iiSnT2-kRB4ZY"; //your firebase cloud messaging server key
+                final String key = "AIzaSyArCZO8yh0tUlvxqv7H_8iiSnT2-kRB4ZY"; //your firebase cloud messaging server key
                 OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
                 httpClient.addInterceptor(new Interceptor() {
                     @NonNull
@@ -191,7 +197,7 @@ public class CustomersMap extends AppCompatActivity
                         Request original = chain.request();
                         Request.Builder requestBuilder = original.newBuilder()
 
-                                .header("Authorization", "key="+key); //http request header
+                                .header("Authorization", "key=" + key); //http request header
 
                         Request request = requestBuilder.build();
                         return chain.proceed(request);
@@ -212,7 +218,6 @@ public class CustomersMap extends AppCompatActivity
 
                 NotifyData notification = new NotifyData("Hi everyone,", "Tabitha is smarter than she thinks.");
                 NotifyExtraData data = new NotifyExtraData("Ride ordered", "from android app", 0.0, 0.0);
-
 
 
                 //http call to a particular device token(each device has its own device, so here i am using this device so you can click the bottom and receive the notification)
@@ -241,9 +246,9 @@ public class CustomersMap extends AppCompatActivity
         //to make it come here first on launching so it will check if the user truly has an account before telling him to go to login page...
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             // Start sign in/sign up activity
-            startActivity(new Intent(CustomersMap.this, CustomerLogin.class));
+            startActivity(new Intent(getContext(), CustomerLogin.class));
 
-            finish();
+            getActivity().finish();
         } else {
             // User is already signed in. Therefore, display
             // a welcome Toast
@@ -281,12 +286,8 @@ public class CustomersMap extends AppCompatActivity
 
             }
         });
-
-
         //for the pop up window
-
-
-        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+         placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
 
@@ -296,7 +297,7 @@ public class CustomersMap extends AppCompatActivity
                 Log.i("the destination cordin", "" + destinationLoc);
 
 
-              //clear the map of all markers
+                //clear the map of all markers
                 mMap.clear();
 
                 //add all the drivers in the driverlist to the map
@@ -350,13 +351,10 @@ public class CustomersMap extends AppCompatActivity
                 Log.d("Maps", "An error occurred: " + status);
             }
         });
-
-
-
-
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        return view;
     }
 
     String token2;
@@ -364,6 +362,7 @@ public class CustomersMap extends AppCompatActivity
     public void onMapReady(GoogleMap map) {
         mMap = map;
         mMap.setOnMyLocationClickListener(this);
+        SaveProfiledetails();
 
         if(mMap != null) {
             mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
@@ -413,7 +412,7 @@ public class CustomersMap extends AppCompatActivity
                 token2  = task.getResult().getToken();
                 Log.e("Token", "onComplete: token id: "+token2);
 
-                Toast.makeText(CustomersMap.this, "token id : "+token2, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "token id : "+token2, Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -426,7 +425,7 @@ public class CustomersMap extends AppCompatActivity
      * Enables the My Location layer if the fine location permission has been granted.
      */
     private void enableMyLocation() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             // Permission to access the location is missing.
             PermissionUtils.requestPermission(this, LOCATION_PERMISSION_REQUEST_CODE,
@@ -434,7 +433,7 @@ public class CustomersMap extends AppCompatActivity
         } else{
 
             if(!isLocationOn()){
-                Toast.makeText(this, "Your location is turned off.\nKindly switch it off and restart the app", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Your location is turned off.\nKindly switch it on and restart the app", Toast.LENGTH_SHORT).show();
             }
 
             if (mMap != null && isLocationOn()){
@@ -442,7 +441,7 @@ public class CustomersMap extends AppCompatActivity
 //                mMap.setMyLocationEnabled(true);
 
 
-                LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                 Criteria criteria = new Criteria();
 
                 Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
@@ -470,7 +469,7 @@ public class CustomersMap extends AppCompatActivity
 
         if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.KITKAT){
             try {
-                locationMode = Settings.Secure.getInt(this.getContentResolver(), Settings.Secure.LOCATION_MODE);
+                locationMode = Settings.Secure.getInt(getContext().getContentResolver(), Settings.Secure.LOCATION_MODE);
             }catch(Settings.SettingNotFoundException ex){
                 ex.printStackTrace();
                 Log.e("Location On?", "enableMyLocation: ",ex );
@@ -480,7 +479,7 @@ public class CustomersMap extends AppCompatActivity
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
         }else{
-            locationProviders = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            locationProviders = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
     }
@@ -491,7 +490,7 @@ public class CustomersMap extends AppCompatActivity
         try {
 
 
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            LocationManager locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
 
             location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
@@ -542,9 +541,10 @@ public class CustomersMap extends AppCompatActivity
         }
     }
 
+    //comment this out
     @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
+    public void onResume() {
+        super.onResume();
         if (mPermissionDenied) {
             // Permission was not granted, display error dialog.
             showMissingPermissionError();
@@ -552,12 +552,16 @@ public class CustomersMap extends AppCompatActivity
         }
     }
 
+//    protected void onResumeFragments(){
+//
+//    }
+
     /**
      * Displays a dialog with error message explaining that the location permission is missing.
      */
     private void showMissingPermissionError() {
         PermissionUtils.PermissionDeniedDialog
-                .newInstance(true).show(getSupportFragmentManager(), "dialog");
+                .newInstance(true).show(getActivity().getSupportFragmentManager(), "dialog");
     }
 
 
@@ -631,20 +635,20 @@ public class CustomersMap extends AppCompatActivity
      */
     private void zoomToLocation(LatLng location) {
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.latitude, location.longitude), 13));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.latitude, location.longitude), 13));
 
 
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.latitude, location.longitude))      // Sets the center of the map to location user
-                        .zoom(18)                   // Sets the zoom
-                        .bearing(90)                // Sets the orientation of the camera to east
-                        .tilt(50)                   // Sets the tilt of the camera to 30 degrees
-                        .build();                   // Creates a CameraPosition from the builder
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(new LatLng(location.latitude, location.longitude))      // Sets the center of the map to location user
+                .zoom(18)                   // Sets the zoom
+                .bearing(90)                // Sets the orientation of the camera to east
+                .tilt(50)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
 
 
-                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)));
+        Marker marker = mMap.addMarker(new MarkerOptions().position(new LatLng(location.latitude, location.longitude)));
     }
 
 
@@ -652,21 +656,19 @@ public class CustomersMap extends AppCompatActivity
     String key = "";
     private void saveUserLatAndLong(double latitude, double longitude, String placeName ) {
 
-
+SaveProfiledetails();
         // dataa.child(getIntent().getStringExtra("EdiTtEXTvALUE"));
 
 
         if(latitude != 0.0 && longitude != 0.0) {
-            SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, placeName, email, new Date().toString(), getsong
-, getstorename, getGetstorenumber
-            );
+            SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, placeName, email,new Date().toString(),getsong,getstorenumber,getstorename);
 
             //generate key for first insert,any subsequent inserts will update the former one
             if (key.isEmpty()) key = dataa.child("").push().getKey();
             dataa.child("SaveLatLong").child(key).setValue(saveLatLong);
 
 
-            Toast.makeText(this, "latitude saved", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "latitude saved", Toast.LENGTH_LONG).show();
             Log.d("the third latlng is", "" + saveLatLong);
         }
 
@@ -705,7 +707,7 @@ public class CustomersMap extends AppCompatActivity
             @Override
             public void onMapLoaded() {
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-          }
+            }
         });
 
 
@@ -754,7 +756,7 @@ public class CustomersMap extends AppCompatActivity
                         if (distance <= 2) {
                             Log.i("location nearby(<2km)", "onDataChange--> lat: " + latitude
                                     + " long: " + longitude + " placename: " + placeName);
-                            SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, ""," ", " "," ","", "");
+                            SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, "","", "","","", "");
                             driverList.add(saveLatLong);
                             addDriverLocationMarker(latitude, longitude, placeName);
                         }
@@ -775,12 +777,17 @@ public class CustomersMap extends AppCompatActivity
         });
     }
 
+public void SaveProfiledetails ()
+{
+    SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
+    SharedPreferences.Editor editor= sharedPreferences.edit();
+    //to get the information stored in preferences
+     getsong =sharedPreferences.getString(getString(R.string.song), " default value");
+    getstorename =sharedPreferences.getString(getString(R.string.storename), " default value");
+    getstorenumber =sharedPreferences.getString(getString(R.string.storenumber), " default value");
 
 
+    Log.d(getsong, " the detail is");
 }
 
-
-
-
-
-
+}

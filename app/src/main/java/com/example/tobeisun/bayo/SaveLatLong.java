@@ -13,20 +13,25 @@ public class SaveLatLong   {
     public String placeName;
     public String email;
 public String datee;
+public String gethobby;
+public String getstorename;
+public String getstorenumber;
 
     public SaveLatLong(){
 
     }
 
 
-    public SaveLatLong(double latitude,double longitude,String placeName, String email,String datee){
+    public SaveLatLong(double latitude,double longitude,String placeName, String email,String datee, String gethobby, String getstorename, String getstorenumber){
 
         this.latitude = latitude;
         this.longitude = longitude;
         this.placeName = placeName;
         this.email=email;
          this.datee=datee;
-
+         this.gethobby= gethobby;
+           this.getstorename= getstorename;
+           this.getstorenumber= getstorenumber;
     }
 
 

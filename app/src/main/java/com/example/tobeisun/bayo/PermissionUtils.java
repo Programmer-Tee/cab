@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
 public abstract class PermissionUtils {
@@ -42,6 +43,20 @@ public abstract class PermissionUtils {
         } else {
             // Location permission has not been granted yet, request it.
             ActivityCompat.requestPermissions(activity, new String[]{permission}, requestId);
+
+        }
+    }
+
+
+    public static void requestPermission(Fragment fragment, int requestId,
+                                         String permission, boolean finishActivity) {
+        if (fragment.shouldShowRequestPermissionRationale(permission)) {
+            // Display a dialog with rationale.
+            PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)
+                    .show(fragment.getFragmentManager(), "dialog");
+        } else {
+            // Location permission has not been granted yet, request it.
+            fragment.requestPermissions( new String[]{permission}, requestId);
 
         }
     }
