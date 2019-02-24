@@ -11,18 +11,75 @@ public class SaveLatLong   {
    public double latitude;
     public double longitude;
     public String placeName;
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String email;
 public String datee;
-public String gethobby;
-public String getstorename;
-public String getstorenumber;
 
-    public SaveLatLong(){
+    public String getGethobby() {
+        return gethobby;
+    }
+
+    public void setGethobby(String gethobby) {
+        this.gethobby = gethobby;
+    }
+
+    public String gethobby;
+public String getstorename;
+
+    public String getGetstorename() {
+        return getstorename;
+    }
+
+    public void setGetstorename(String getstorename) {
+        this.getstorename = getstorename;
+    }
+
+    public SaveLatLong()
+    {
 
     }
 
+    public String getGetstorenumber() {
+        return getstorenumber;
+    }
 
-    public SaveLatLong(double latitude,double longitude,String placeName, String email,String datee, String gethobby, String getstorename, String getstorenumber){
+    public void setGetstorenumber(String getstorenumber) {
+        this.getstorenumber = getstorenumber;
+    }
+
+    public String getstorenumber;
+
+    public SaveLatLong(double latitude, double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public SaveLatLong(double latitude, double longitude, String placeName, String email, String datee, String gethobby, String getstorename, String getstorenumber){
 
         this.latitude = latitude;
         this.longitude = longitude;

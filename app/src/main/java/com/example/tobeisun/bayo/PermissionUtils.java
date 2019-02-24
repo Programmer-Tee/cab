@@ -61,6 +61,18 @@ public abstract class PermissionUtils {
         }
     }
 
+    public static void requestPermissionn(Fragment fragment, int requestId,
+                                         String permission, boolean finishActivity) {
+        if (fragment.shouldShowRequestPermissionRationale(permission)) {
+            // Display a dialog with rationale.
+            PermissionUtils.RationaleDialog.newInstance(requestId, finishActivity)
+                    .show(fragment.getFragmentManager(), "dialog");
+        } else {
+            // Location permission has not been granted yet, request it.
+            fragment.requestPermissions( new String[]{permission}, requestId);
+
+        }
+    }
     /**
      * Checks if the result contains a {@link PackageManager#PERMISSION_GRANTED} result for a
      * permission from a runtime permissions request.

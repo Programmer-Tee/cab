@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DriverAcceptRide">
+
+    <TextView
+        android:id="@+id/textviewDetailsofRider"
+        android:layout_width="381dp"
+        android:layout_height="104dp"
+        android:layout_above="@+id/AcceptRidebtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="535dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="73dp"
+        android:text="Details of Rider"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="117dp" />
+
+    <TextView
+        android:id="@+id/textviewDisplayHobbies"
+        android:layout_width="390dp"
+        android:layout_height="84dp"
+        android:layout_above="@+id/AcceptRidebtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="181dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginRight="21dp"
+        android:layout_marginBottom="73dp"
+        android:text=" Loading..."
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="117dp" />
+
+
+    <TextView
+        android:id="@+id/textviewDisplayUsername"
+        android:layout_width="381dp"
+        android:layout_height="104dp"
+        android:layout_above="@+id/textviewDisplayHobbies"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="300dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="73dp"
+        android:text="Loading... "
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="117dp" />
+
+    <TextView
+        android:id="@+id/textviewDisplayPhoneNumber"
+        android:layout_width="381dp"
+        android:layout_height="104dp"
+        android:layout_above="@+id/AcceptRidebtn"
+        android:layout_below="@+id/textviewDisplayUsername"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="13dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="73dp"
+        android:text="Loading... "
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="117dp" />
+
+    <TextView
+        android:id="@+id/textviewDisplayLatitude"
+        android:layout_width="381dp"
+        android:layout_height="104dp"
+        android:layout_above="@+id/AcceptRidebtn"
+        android:layout_below="@+id/textviewDisplayPhoneNumber"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="211dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="73dp"
+        android:text="Loading... "
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="36dp"
+        tools:layout_editor_absoluteX="38dp"
+        tools:layout_editor_absoluteY="117dp" />
+
+
+
+
+
+
+
+
+
+</RelativeLayout>
+

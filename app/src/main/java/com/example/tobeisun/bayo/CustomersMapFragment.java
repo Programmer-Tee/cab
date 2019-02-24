@@ -1,10 +1,18 @@
 package com.example.tobeisun.bayo;
 
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.media.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,11 +21,14 @@ import com.example.tobeisun.bayo.communication.FirebaseMessageAPI;
 import com.example.tobeisun.bayo.communication.Message;
 import com.example.tobeisun.bayo.communication.NotifyData;
 import com.example.tobeisun.bayo.communication.NotifyExtraData;
+import com.example.tobeisun.bayo.model.User;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 //import com.firebase.client.Query;
+import com.firebase.client.Query;
 import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.firebase.client.ValueEventListener;
@@ -64,6 +75,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 //import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -76,6 +88,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Random;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -87,11 +100,32 @@ import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static android.support.v4.app.NotificationCompat.PRIORITY_DEFAULT;
+import static android.support.v4.media.app.NotificationCompat.*;
+
 public class CustomersMapFragment extends Fragment implements
 //        GoogleMap.OnMyLocationButtonClickListener,
         GoogleMap.OnMyLocationClickListener,
         OnMapReadyCallback,
         ActivityCompat.OnRequestPermissionsResultCallback {
+
+    //To receive broadcast that driver details has being saved
+       private BroadcastReceiver onDriverDetailsSaved = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
+
+    //To receive broadcast that ride has been ordered
+    private BroadcastReceiver onRideOrdered = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            trackOneDriver();
+//            Toast.makeText(context, "Ride Ordered", Toast.LENGTH_SHORT).show();
+        }
+    };
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     public static double lat;
@@ -102,6 +136,7 @@ public class CustomersMapFragment extends Fragment implements
 
     DatabaseReference dataa;
     String placeName;
+
     String email;
     String profilesong;
     Button setdestination;
@@ -155,12 +190,15 @@ public class CustomersMapFragment extends Fragment implements
         //added by abeeb
         //get the email that was added to the intent from customer login activity
         email = getActivity().getIntent().getStringExtra("email");
+
         profilesong= getActivity().getIntent().getStringExtra("ProfileSong");
         getstorename= getActivity().getIntent().getStringExtra("storename");
         getstorenumber= getActivity().getIntent().getStringExtra("storenumber");
-        Log.i("Got email", "onCreate: email: "+email);
 
-        ref = new Firebase("https://bayo-f1055.firebaseio.com/SaveLatLong");
+        Log.i("Got email", "onCreate: email: "+email);
+        UtilsClass.updateSharedPref(getContext(), Constants.USER_EMAIL, email);
+
+//        ref = new Firebase("https://bayo-f1055.firebaseio.com/SaveLatLong");
 
         setdestination = (Button) view.findViewById(R.id.buttonsetdest);
         linearLayout = (LinearLayout) view.findViewById(R.id.Linear);
@@ -176,15 +214,78 @@ public class CustomersMapFragment extends Fragment implements
             public void onClick(View view) {
 
                 //passing price to the pop up activity
+                Intent sendingIntent = new Intent(getContext(), popupforcustomer.class);
+          sendingIntent.putExtra("Double_price", price);
 
-//                Intent sendingIntent = new Intent(CustomersMap.this, popupforcustomer.class);
-//                sendingIntent.putExtra("Double_price", price);
-//
-//                startActivity(sendingIntent);
+            startActivity(sendingIntent);
+       saveLatandLonginUser(originLoc.latitude,originLoc.longitude);
+                           //added by Tabs
 
+                NotificationManager mNotificationManager =
+                        (NotificationManager)getContext(). getSystemService(Context.NOTIFICATION_SERVICE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel channel = new NotificationChannel("default",
+                            "YOUR_CHANNEL_NAME",
+                            NotificationManager.IMPORTANCE_DEFAULT);
+                    channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+                    mNotificationManager.createNotificationChannel(channel);
+                }
+                android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(getContext(), "default")
+                        .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                        .setContentTitle("Notofication") // title for notification
+                        .setContentText(" NEXT RIDER")// message for notification
+                        // .setSound(alarmSound) // set alarm sound for notification
+                        .setAutoCancel(true); // clear notification after click
+                Intent intent = new Intent(getContext(), DriverAcceptOrRejectRide.class);
+
+                PendingIntent pi = PendingIntent.getActivity(getContext(), 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                mBuilder.setContentIntent(pi);
+                mNotificationManager.notify(1, mBuilder.build());
+                //CalculationByDistance(originLoc, destinationLoc);
+
+                //added by Tabitha
+              //  android.support.v4.app.NotificationCompat.
+                    /*    Notification.Builder mBuilder = new Notification.Builder(this, CHANNEL_ID)
+
+                        .setContentTitle("My notification")
+                        .setContentText("Much longer text that cannot fit one line...")
+                        .setStyle(new android.support.v4.app.NotificationCompat.BigTextStyle()
+                                .bigText("Much longer text that cannot fit one line..."))
+                        .setPriority(PRIORITY_DEFAULT);
+
+
+            /*    private void createNotificationChannel() {
+                    // Create the NotificationChannel, but only on API 26+ because
+                    // the NotificationChannel class is new and not in the support library
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        CharSequence name = getString(R.string.channel_name);
+                        String description = getString(R.string.channel_description);
+                        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+                        channel.setDescription(description);
+                        // Register the channel with the system; you can't change the importance
+                        // or other notification behaviors after this
+                        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                        notificationManager.createNotificationChannel(channel);
+                    }
+                }*/
+
+                // Create an explicit intent for an Activity in your app
+             /*   Intent intent = new Intent(getContext(), DriversMap.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+
+                android.support.v4.app.NotificationCompat.Builder mBuilder2 = new android.support.v4.app.NotificationCompat.Builder(this, CHANNEL_ID)
+
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!")
+                        .setPriority(android.support.v4.app.NotificationCompat.PRIORITY_DEFAULT)
+                        // Set the intent that will fire when the user taps the notification
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true); */
 
                 //added by abeeb
-                //sending message to a particulat device starts here
+                //sending message to a particular device starts here
                 HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
                 logging.setLevel(HttpLoggingInterceptor.Level.BODY);
                 final String key = "AIzaSyArCZO8yh0tUlvxqv7H_8iiSnT2-kRB4ZY"; //your firebase cloud messaging server key
@@ -201,13 +302,24 @@ public class CustomersMapFragment extends Fragment implements
 
                         Request request = requestBuilder.build();
                         return chain.proceed(request);
+
+
+                        //passing price to the pop up activity
+
+//                Intent sendingIntent = new Intent(CustomersMap.this, popupforcustomer.class);
+//                sendingIntent.putExtra("Double_price", price);
+//
+//                startActivity(sendingIntent);
+                      //  CalculationByDistance(originLoc, destinationLoc);
+
+
                     }
                 });
 
                 httpClient.addInterceptor(logging);
                 OkHttpClient client = httpClient.build();
 
-                Retrofit retrofit = new Retrofit.Builder()
+                final Retrofit retrofit = new Retrofit.Builder()
                         .baseUrl("https://fcm.googleapis.com") //firebase cloud messaging(FCM) host address
                         .client(client)
                         .addConverterFactory(GsonConverterFactory.create())
@@ -216,7 +328,7 @@ public class CustomersMapFragment extends Fragment implements
                 FirebaseMessageAPI firebaseMessageAPI = retrofit.create(FirebaseMessageAPI.class);
 
 
-                NotifyData notification = new NotifyData("Hi everyone,", "Tabitha is smarter than she thinks.");
+                final NotifyData notification = new NotifyData("Next Ride Alert :", "DONT CLICK THIS");
                 NotifyExtraData data = new NotifyExtraData("Ride ordered", "from android app", 0.0, 0.0);
 
 
@@ -231,13 +343,19 @@ public class CustomersMapFragment extends Fragment implements
                     public void onResponse(@NonNull Call<Message> call, @NonNull retrofit2.Response<Message> response) {
                         Log.e("Response", "onResponse: message sent" + response.body().getNotification());
 
+                       Intent resultintent= (new Intent(getActivity(), CustomerLogin.class));
+                       PendingIntent pendingIntent = PendingIntent.getActivity(getContext(),1,resultintent,PendingIntent.FLAG_UPDATE_CURRENT);
                     }
+
+
 
                     @Override
                     public void onFailure(@NonNull Call<Message> call, @NonNull Throwable t) {
                         Log.e("Response", "onFailure: message not sent");
                     }
                 });
+
+
 
 
             }
@@ -256,6 +374,7 @@ public class CustomersMapFragment extends Fragment implements
 
             //get user email from user, if user is already logged in
             email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+            UtilsClass.updateSharedPref(getContext(), Constants.USER_EMAIL, email);
         }
 
         originPlaceAutoComplete.setHint("Your Location");
@@ -308,16 +427,17 @@ public class CustomersMapFragment extends Fragment implements
                 //add destination marker to map
                 destinationMarker = mMap.addMarker(new MarkerOptions().position(destinationLoc).title(place.getName().toString()));
 
-                zoomToLocation(destinationLoc);
+                zoomToLocation(destinationLoc); CalculationByDistance(originLoc, destinationLoc);
 
 
-                CalculationByDistance(originLoc, destinationLoc);
+
 
 
 
                 //added by abeeb
                 // this is to set the view/zoom of the map to show user, drivers and destination locations
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
                 builder.include(originMarker.getPosition());
                 builder.include(destinationMarker.getPosition());
                 for(SaveLatLong latLong : driverList){
@@ -353,6 +473,15 @@ public class CustomersMapFragment extends Fragment implements
         });
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        // to register receiver for when driver details has been gotten
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(onDriverDetailsSaved,
+                new IntentFilter(Constants.BROADCAST_DRIVER_DETAILS));
+
+        //to register receiver for when ride order flow has been completed
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(onRideOrdered,
+                new IntentFilter(Constants.BROADCAST_RIDE_ORDERED));
 
         return view;
     }
@@ -458,6 +587,8 @@ public class CustomersMapFragment extends Fragment implements
 
 
 
+            }else{
+                zoomToLocation(originLoc);
             }
         }
     }
@@ -483,7 +614,29 @@ public class CustomersMapFragment extends Fragment implements
             return !TextUtils.isEmpty(locationProviders);
         }
     }
+//added by Tabitha for Notification
 
+    public void showNotification(String title, String content) {
+        NotificationManager mNotificationManager =
+                (NotificationManager)getContext(). getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("default",
+                    "YOUR_CHANNEL_NAME",
+                    NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("YOUR_NOTIFICATION_CHANNEL_DISCRIPTION");
+            mNotificationManager.createNotificationChannel(channel);
+        }
+        android.support.v4.app.NotificationCompat.Builder mBuilder = new android.support.v4.app.NotificationCompat.Builder(getContext(), "default")
+                .setSmallIcon(R.mipmap.ic_launcher) // notification icon
+                .setContentTitle(title) // title for notification
+                .setContentText(" RIDER")// message for notification
+               // .setSound(alarmSound) // set alarm sound for notification
+                .setAutoCancel(true); // clear notification after click
+        Intent intent = new Intent(getContext(), DriversMap.class);
+        PendingIntent pi = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(pi);
+        mNotificationManager.notify(0, mBuilder.build());
+    }
 
     @Override
     public void onMyLocationClick(@NonNull Location location) {
@@ -552,7 +705,16 @@ public class CustomersMapFragment extends Fragment implements
         }
     }
 
-//    protected void onResumeFragments(){
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        //unregister receivers when fragment get destroyed
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(onDriverDetailsSaved);
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(onRideOrdered);
+    }
+
+    //    protected void onResumeFragments(){
 //
 //    }
 
@@ -652,17 +814,17 @@ public class CustomersMapFragment extends Fragment implements
     }
 
 
-    //refactored by abeeb, to accept parameters
+    //refactored to accept parameters
     String key = "";
     private void saveUserLatAndLong(double latitude, double longitude, String placeName ) {
 
-SaveProfiledetails();
+        SaveProfiledetails();
         // dataa.child(getIntent().getStringExtra("EdiTtEXTvALUE"));
 
 
         if(latitude != 0.0 && longitude != 0.0) {
             SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, placeName, email,new Date().toString(),getsong,getstorenumber,getstorename);
-
+           //User user = new User( " ", "","","",  latitude, longitude);
             //generate key for first insert,any subsequent inserts will update the former one
             if (key.isEmpty()) key = dataa.child("").push().getKey();
             dataa.child("SaveLatLong").child(key).setValue(saveLatLong);
@@ -673,8 +835,30 @@ SaveProfiledetails();
         }
 
 
+
+
+
     }
 
+
+    private void saveLatandLonginUser(double latitude, double longitude ) {
+
+        // SaveProfiledetails();
+        // dataa.child(getIntent().getStringExtra("EdiTtEXTvALUE"));
+
+
+        if (latitude != 0.0 && longitude != 0.0) {
+            // SaveLatLong saveLatLong = new SaveLatLong(latitude, longitude, placeName, email,new Date().toString(),getsong,getstorenumber,getstorename);
+            User user = new User(" ", email, "", "", latitude, longitude);
+            //generate key for first insert,any subsequent inserts will update the former one
+            if (key.isEmpty()) key = dataa.child("").push().getKey();
+            dataa.child("User").child(key).setValue(user);
+
+
+            Toast.makeText(getContext(), "latitude saved", Toast.LENGTH_LONG).show();
+           // Log.d("the third latlng is", "" + user);
+        }
+    }
 
     //added by abeeb
     //this adds driver markers to the map
@@ -715,6 +899,7 @@ SaveProfiledetails();
 
     private void findDriversNearBy() {
 
+        ref = new Firebase("https://bayo-f1055.firebaseio.com/SaveLatLong");
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -777,17 +962,87 @@ SaveProfiledetails();
         });
     }
 
-public void SaveProfiledetails ()
-{
-    SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
-    SharedPreferences.Editor editor= sharedPreferences.edit();
-    //to get the information stored in preferences
-     getsong =sharedPreferences.getString(getString(R.string.song), " default value");
-    getstorename =sharedPreferences.getString(getString(R.string.storename), " default value");
-    getstorenumber =sharedPreferences.getString(getString(R.string.storenumber), " default value");
+    private void trackOneDriver(){
+       ref = new Firebase("https://bayo-f1055.firebaseio.com/SaveLatLongDestination");
+
+//       int maxRandom = driverList.size();
+//        Random rand = new Random();
+//        int n = rand.nextInt(maxRandom) + 1;
+//        final SaveLatLong saveLatLong = driverList.get(n);
 
 
-    Log.d(getsong, " the detail is");
-}
+//        Query query = ref.orderByChild("placeName").equalTo("Ikeja");
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for(DataSnapshot driverLocation : dataSnapshot.getChildren()){
+//                    if(driverLocation.child("placeName") != null){
+//                        mMap.clear();
+//                        originMarker = mMap.addMarker(new MarkerOptions().position(originLoc).title("Your location"));
+//
+//                        double latitude = driverLocation.child("latitude").getValue(Double.class);
+//                        double longitude = driverLocation.child("longitude").getValue(Double.class);
+//                        String email = driverLocation.child("email").getValue(String.class);
+//                        String date = driverLocation.child("datee").getValue(String.class);
+////                        double latitude,double longitude,String placeName, String email,String datee
+//                        SaveLatLongDestination destination = new SaveLatLongDestination(latitude, longitude, placeName,email, date );
+//                        Log.e("One driver", "onDataChange: "+ destination );
+//                        Toast.makeText(getContext(), destination.toString(), Toast.LENGTH_SHORT).show();
+//
+//                        addDriverLocationMarker(latitude, longitude, placeName);
+//                    }Nea//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(FirebaseError firebaseError) {
+//
+//            }
+//        });
+
+        DatabaseReference ref =FirebaseDatabase.getInstance().getReference().child("SaveLatLongDestination");
+
+        ref.orderByChild("placeName").equalTo("Ikeja").addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+                    for(com.google.firebase.database.DataSnapshot driverLocation : dataSnapshot.getChildren()){
+                    if(driverLocation.child("placeName") != null){
+                        mMap.clear();
+                        originMarker = mMap.addMarker(new MarkerOptions().position(originLoc).title("Your location"));
+
+                        double latitude = driverLocation.child("latitude").getValue(Double.class);
+                        double longitude = driverLocation.child("longitude").getValue(Double.class);
+                        String email = driverLocation.child("email").getValue(String.class);
+                        String date = driverLocation.child("datee").getValue(String.class);
+//                        double latitude,double longitude,String placeName, String email,String datee
+                        SaveLatLongDestination destination = new SaveLatLongDestination(latitude, longitude, placeName,email, date );
+                        Log.e("One driver", "onDataChange: "+ destination );
+                        Toast.makeText(getContext(), destination.toString(), Toast.LENGTH_SHORT).show();
+
+                        addDriverLocationMarker(latitude, longitude, placeName);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void SaveProfiledetails () {
+        SharedPreferences sharedPreferences= PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor= sharedPreferences.edit();
+        //to get the information stored in preferences
+         getsong =sharedPreferences.getString(getString(R.string.song), " default value");
+        getstorename =sharedPreferences.getString(getString(R.string.storename), " default value");
+        getstorenumber =sharedPreferences.getString(getString(R.string.storenumber), " default value");
+
+
+        Log.d(getsong, " the detail is");
+    }
 
 }

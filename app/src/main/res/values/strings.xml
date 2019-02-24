@@ -11,6 +11,12 @@
 
     <string name="storenumber">com.example.tobeisun.bayo.SharedPreferences.storenumber</string>
 
+
+    <string name="drivername">com.example.tobeisun.bayo.SharedPreferences.drivername</string>
+    <string name="drivernumber">com.example.tobeisun.bayo.SharedPreferences.drivernumber</string>
+    <string name="drivercar">com.example.tobeisun.bayo.SharedPreferences.drivercar</string>
+
+
     <string-array name="time">
         <item>6</item>
         <item>7</item>
@@ -81,6 +87,8 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_drivers_map">DriversMap</string>
+    <string name="title_activity_driversnavigationdrawer">Driversnavigationdrawer</string>
 
 
 </resources>

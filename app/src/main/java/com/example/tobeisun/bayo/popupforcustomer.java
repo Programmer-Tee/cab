@@ -1,6 +1,10 @@
 package com.example.tobeisun.bayo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -8,8 +12,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class popupforcustomer extends AppCompatActivity {
+
+    //To receive broadcast that ride has been ordered
+    private BroadcastReceiver onRideOrdered = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+//            Toast.makeText(context, "Ride Ordered", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    };
 
     Button back;
 
@@ -26,19 +41,20 @@ public class popupforcustomer extends AppCompatActivity {
 
         price =(TextView) findViewById(R.id.pricetextview);
         Thepriceis=(TextView) findViewById(R.id.thepriceistextview);
-test =(Button)findViewById(R.id.btntest);
-test.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        startActivity(new Intent(popupforcustomer.this, PickAVehicle.class));
-    }
-});
-back.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        startActivity(new Intent(popupforcustomer.this, CustomersMap.class));
-    }
-});
+        test =(Button)findViewById(R.id.btntest);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(popupforcustomer.this, PickAVehicle.class));
+            }
+        });
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                startActivity(new Intent(popupforcustomer.this, CustomersMapFragment.class));
+                finish();
+            }
+        });
 
 
 // this is for the pop up window
@@ -72,8 +88,14 @@ back.setOnClickListener(new View.OnClickListener() {
 
         }
 
-        }
 
+        LocalBroadcastManager.getInstance(this).registerReceiver(onRideOrdered,
+                new IntentFilter(Constants.BROADCAST_RIDE_ORDERED));
+    }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onRideOrdered);
+    }
 }

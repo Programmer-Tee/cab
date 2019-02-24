@@ -24,7 +24,14 @@ public class SaveLatLongDestination {
 
     }
 
-
-
-
+    @Override
+    public String toString() {
+        return "SaveLatLongDestination{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", placeName='" + placeName + '\'' +
+                ", email='" + email + '\'' +
+                ", datee='" + datee + '\'' +
+                '}';
+    }
 }

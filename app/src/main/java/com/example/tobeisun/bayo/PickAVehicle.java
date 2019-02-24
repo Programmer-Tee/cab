@@ -1,6 +1,10 @@
 package com.example.tobeisun.bayo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +12,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 public class PickAVehicle extends AppCompatActivity {
+
+    //To receive broadcast that ride has been ordered
+    private BroadcastReceiver onRideOrdered = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+//            Toast.makeText(context, "Ride Ordered", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    };
 
     TextView infobus ;
     TextView infocar;
@@ -36,8 +50,17 @@ public class PickAVehicle extends AppCompatActivity {
         car.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-startActivity(new Intent(PickAVehicle.this,CustomerDestinationMap.class));
+            startActivity(new Intent(PickAVehicle.this,CustomerDestinationMap.class));
             }
         });
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(onRideOrdered,
+                new IntentFilter(Constants.BROADCAST_RIDE_ORDERED));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(onRideOrdered);
     }
 }

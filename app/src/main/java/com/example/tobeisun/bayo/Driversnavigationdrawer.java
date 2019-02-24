@@ -19,7 +19,7 @@ import android.view.MenuItem;
 
 import java.util.List;
 
-public class TestActivity extends AppCompatActivity
+public class Driversnavigationdrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
@@ -95,7 +95,7 @@ public class TestActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-       selectedDrawerItem(id);
+        selectedDrawerItem(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -124,17 +124,17 @@ public class TestActivity extends AppCompatActivity
 
 
                 //checks if the fragment has already been created before so it doesnt recreate
-               fragment = fm.findFragmentByTag("customersMapFragment");
+                fragment = fm.findFragmentByTag("DriversMap");
 
                 //if it hasnt been created before, create it with "customersMapFragment" tag
                 if (fragment == null) {
-                    fragment = CustomersMapFragment.newInstance();
-                    transaction.add(R.id.fl_content, fragment, "customersMapFragment");
+                    fragment = DriversMap.newInstance();
+                    transaction.add(R.id.fl_content, fragment, "DriversMap");
                     transaction.commit();
 
                     // if it already exist, just get it from the fragment manager with the tag and show it
                 } else {
-                    transaction.show(getSupportFragmentManager().findFragmentByTag("customersMapFragment"));
+                    transaction.show(getSupportFragmentManager().findFragmentByTag("DriversMap"));
                     transaction.commit();
                     fm.popBackStack();
 
@@ -143,17 +143,17 @@ public class TestActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_gallery:
-                fragment = fm.findFragmentByTag("aboutmeFragment");
+                fragment = fm.findFragmentByTag("aboutdriverFragment");
 
                 //if it hasnt been created before, create it with "customersMapFragment" tag
                 if (fragment == null) {
-                    fragment = new aboutme();
-                    transaction.add(R.id.fl_content, fragment, "aboutmeFragment");
+                    fragment = new aboutdriver();
+                    transaction.add(R.id.fl_content, fragment, "aboutdriverFragment");
                     transaction.commit();
 
                     // if it already exist, just get it from the fragment manager with the tag and show it
                 } else {
-                    transaction.show(getSupportFragmentManager().findFragmentByTag("aboutmeFragment"));
+                    transaction.show(getSupportFragmentManager().findFragmentByTag("aboutdriverFragment"));
                     transaction.commit();
                     fm.popBackStack();
 
@@ -164,7 +164,7 @@ public class TestActivity extends AppCompatActivity
 
             case R.id.nav_manage:
 
-                setTitle("SECOND FRAGMENT");
+                setTitle("SECOND DRIVER FRAGMENT");
                 Rides rides = new Rides();
                 FragmentManager fragmentManager1= getSupportFragmentManager();
 

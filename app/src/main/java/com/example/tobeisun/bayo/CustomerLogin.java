@@ -5,20 +5,24 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 
+import com.example.tobeisun.bayo.model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class CustomerLogin extends AppCompatActivity {
 
@@ -101,7 +105,7 @@ public class CustomerLogin extends AppCompatActivity {
 //        checkIfUserIsLoggedIn();
     }
 
-    private void Registercustomer(String email, String password)
+    private void Registercustomer(final String email, String password)
 
     {
 
@@ -126,6 +130,15 @@ public class CustomerLogin extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
                     if (task.isSuccessful()) {
+
+
+                        if(!emailAlreadyExists(email)) {
+                            saveUserToFirebase(email, task.getResult().getUser().getDisplayName());
+                        }else{
+                            Toast.makeText(CustomerLogin.this, "User email already exists in db", Toast.LENGTH_SHORT).show();
+                        }
+                        UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_EMAIL, email);
+
                         Toast.makeText(CustomerLogin.this, "Succeful Signup", Toast.LENGTH_LONG).show();
                         loadingbar.dismiss();
                     } else {
@@ -163,8 +176,12 @@ public class CustomerLogin extends AppCompatActivity {
                         Toast.makeText(CustomerLogin.this, "Successful Login", Toast.LENGTH_LONG).show();
                         loadingbar.dismiss();
 
+
+                        getUserFirebaseKey(email);
+                        UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_EMAIL, email);
+
 //                        Intent x = new Intent(CustomerLogin.this, CustomersMap.class);
-                        Intent x = new Intent(CustomerLogin.this, TestActivity.class);
+                        Intent x = new Intent(CustomerLogin.this, CustomerNavigationDrawer.class);
                         x.putExtra("email", custemail.getText().toString());
 
                         startActivity(x);
@@ -181,6 +198,71 @@ public class CustomerLogin extends AppCompatActivity {
         }
 
 
+    }
+
+    private void saveUserToFirebase(String email, String username){
+
+        DatabaseReference ref =FirebaseDatabase.getInstance().getReference().child("User");
+
+        String key = ref.child("").push().getKey();
+        UtilsClass.updateSharedPref(this, Constants.USER_FB_KEY, key);
+        User user = new User(email, username);
+        ref.child(key).setValue(user);
+
+    }
+
+    private void getUserFirebaseKey(String email){
+        DatabaseReference ref =FirebaseDatabase.getInstance().getReference().child("User");
+        Query query = ref.orderByChild("email").equalTo(email);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(child.exists()){
+                        User user = child.getValue(User.class);
+                        if(user != null){
+                            String key = child.getKey();
+                            UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_FB_KEY, key);
+                            UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_NAME, user.getUsername());
+                            UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_PHONE_NUMBER, user.getPhoneNumber());
+                            UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_EMAIL, user.getEmail());
+                            UtilsClass.updateSharedPref(CustomerLogin.this, Constants.USER_HOBBY, user.getHobbies());
+                            UtilsClass.broadcastUserDetails(CustomerLogin.this);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private boolean exists = false;
+    private boolean emailAlreadyExists(final String email){
+
+        DatabaseReference ref =FirebaseDatabase.getInstance().getReference().child("User");
+        Query query = ref.orderByChild("email").equalTo(email);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                exists = false;
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    if(child.child("email").getValue(String.class).equals(email)){
+                       exists = true;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return exists;
     }
 
 

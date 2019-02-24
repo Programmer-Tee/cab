@@ -1,6 +1,8 @@
 package com.example.tobeisun.bayo.communication;
 
 
+import android.support.v4.media.app.NotificationCompat;
+
 // holds notification data only
 public class NotifyData {
     private String title;
